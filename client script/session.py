@@ -7,16 +7,12 @@ import requests
 import base64
 
 
-s = requests.Session()
+url = input('Enter the url: ')
 
 
-url = 'http://localhost/nesto/download.php'
-response = s.get(url, stream=True)
 
 
-ciphertext = response.text
-ciphertext = base64.b64decode(ciphertext)
-del response
+
 dec_resp = 1
 
 
@@ -43,4 +39,3 @@ url2 = 'http://localhost/nesto/sesija1.php'
 response2 = s.get(url2, params={'value': dec_resp}, stream=True)
 print(response2.text)
 del response2
-
