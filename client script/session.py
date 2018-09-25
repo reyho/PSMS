@@ -1,20 +1,6 @@
-import shutil
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-import requests
-import base64
-
+from PSMSP import Authenticator
 
 url = input('Enter the url: ')
-
-
-
-
-
-dec_resp = 1
-
 
 with open("private_key.pem", "rb") as key_file:
 
