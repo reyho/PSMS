@@ -1,27 +1,12 @@
-from PSMSP import Authenticator
+from PSMSP.Authenticator import Authenticator
 
 url = input('Enter the url: ')
 
-with open("private_key.pem", "rb") as key_file:
+authenticator = Authenticator(url)
+authenticator.get_ciphertext()
+authenticator.load_priv_key()
+decrypted_message = authenticator.decrypt_message()
 
-	private_key = serialization.load_pem_private_key(
-		key_file.read(),
-		password=None,
-		backend=default_backend()
-	)
-	dec_resp = private_key.decrypt(
-		ciphertext,
-		padding.OAEP(
-			mgf=padding.MGF1(algorithm=hashes.SHA1()),
-			algorithm=hashes.SHA1(),
-			label=None
-		)
-	)
+url2 = 'http://localhost/PSMS/sesija1.php'
 
-	print(dec_resp)
-
-
-url2 = 'http://localhost/nesto/sesija1.php'
-response2 = s.get(url2, params={'value': dec_resp}, stream=True)
-print(response2.text)
-del response2
+authenticator.validate_message(url2, decrypted_message)
