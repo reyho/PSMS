@@ -1,6 +1,13 @@
+'''
+The working python script
+'''
+
+#Importing the Authenticator class
 from PSMSP.Authenticator import Authenticator
 
+#Prompting the user to enter the url of the server
 url = input('Enter the url: ')
+
 
 authenticator = Authenticator(url)
 authenticator.get_ciphertext()
