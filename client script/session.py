@@ -4,16 +4,17 @@ The working python script
 
 #Importing the Authenticator class
 from PSMSP.Authenticator import Authenticator
+from PSMSP.Downloader import Downloader
 
+#s = requests.Session()
 #Prompting the user to enter the url of the server
 url = input('Enter the url: ')
 
 
 authenticator = Authenticator(url)
-authenticator.get_ciphertext()
-authenticator.load_priv_key()
-decrypted_message = authenticator.decrypt_message()
+downloader = Downloader(authenticator.authenticate())
 
-url2 = 'http://localhost/PSMS/sesija1.php'
+#url2 = 'http://localhost/PSMS/sesija1.php'
 
-authenticator.validate_message(url2, decrypted_message)
+downloader.download_encrypted_file()
+#downloader.get_filename_from_cd(downloader.print_cd(url2))
