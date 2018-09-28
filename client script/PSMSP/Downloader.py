@@ -3,38 +3,38 @@ Downloader.py is responsible for the download of the encrypted file
 after the authentication process.
 '''
 
+from clint.textui import progress
 import re
 
 class Downloader:
-        
-    '''
-    I have to find a better way to pass the path of the php script
-    which will take the decrypted response and allow me to download
-    the encrypted files. Maybe I should do this with one php script
-    to which i will pass an argument who lets the php script know
-    what I want to do with the script.
-    '''	
     
-    #Initialising the object with the decrypted response
-    #and the request object.
-    def __init__(self, deced_resp_req):
-        self.decrypted_response = deced_resp_req["deced_resp"]
-        self.request = deced_resp_req["req"]
-        self.url = deced_resp_req["url"]
+    #Initialising the object with the decrypted response, request object, url, and error detection
+    def __init__(self, decrypted_response_request_url_error):
+        self.__decrypted_HTTP_response = decrypted_response_request_url_error["decrypted_response"]
+        self.__request = decrypted_response_request_url_error["request"]
+        self.__url = decrypted_response_request_url_error["url"]
     
-    #Sending the decrypted response to the server
-    #and downloading the encrypted file
-    
-    def download_encrypted_file(self):
-        response = self.request.get(self.url, params={'value': self.decrypted_response, 'mode': 'DOWNLOAD'}, stream=True)
-        file_name = Downloader.get_filename_from_cd(response.headers.get('content-disposition'))
-        open(file_name, 'wb').write(response.content)
-        del response
-    
-    #Getting the file name of the downloading file from
-    #the header "content-disposition".
-    def get_filename_from_cd(cd):
+    #Sending the decrypted response to the server and downloading the encrypted file    
+    def download_encrypted_file(self): 
+        try:
+            HTTP_response = self.__request.get(self.__url, params={'value': self.__decrypted_HTTP_response, 'mode': 'DOWNLOAD'}, stream=True)
+        except Exception as e:
+            print('HTTP request error in Downloader.')
+            print(e)
+            sys.exit(1)
+        file_name = Downloader.__get_filename_from_cd(self, HTTP_response.headers.get('content-disposition'))
+        #Download with progress bar
+        with open(file_name, 'wb') as f:
+            total_length = int(HTTP_response.headers.get('content-length'))
+            for chunk in progress.bar(HTTP_response.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+        del HTTP_response        
+            
+    #Getting the file name of the downloading file from header "content-disposition".
+    def __get_filename_from_cd(self, cd):
         file_name = re.findall('filename="(.+)"', cd)
         if len(file_name) == 0:
-            return None
+            return 'Untitled.enc'
         return file_name[0]
