@@ -20,7 +20,7 @@ switch ($_GET['mode']){
         }
         break;
     case 'DOWNLOAD':
-        $file = 'public_key.zip';
+        $file = 'some_file.zip';
         if ($_GET['value'] == $_SESSION['number']){
             if (file_exists($file)) {
                 header('Content-Description: File Transfer');

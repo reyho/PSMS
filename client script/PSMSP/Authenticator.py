@@ -11,11 +11,6 @@ import sys
 import requests
 import base64
 
-'''
-I have to implement some error handling in case the authentication
-fails or something went wrong with the server.
-'''
-
 class Authenticator:
     #Declaration of the HTTP request with session enabled
     __HTTP_request = requests.Session()
@@ -43,8 +38,8 @@ class Authenticator:
     
     def __load_priv_key(self):
         try:
-            #I have to find a better way to pass the path of the private key.
-            with open("C:\git\PSMS\keys\private_key.pem", "rb") as key_file:
+            #Maybe I should make a config file to host the relevant data like paths and such.
+            with open("../keys/private_key.pem", "rb") as key_file:
                 self.__private_key = serialization.load_pem_private_key(
                     key_file.read(), 
                     password=None, 
