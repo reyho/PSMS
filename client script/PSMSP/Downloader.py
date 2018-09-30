@@ -9,10 +9,10 @@ import re
 class Downloader:
 
     #Initialising the object with the decrypted response, request object and url
-    def __init__(self, decrypted_response_request_url_error):
-        self.__decrypted_HTTPS_response = decrypted_response_request_url_error["decrypted_response"]
-        self.__request = decrypted_response_request_url_error["request"]
-        self.__url = decrypted_response_request_url_error["url"]
+    def __init__(self, decrypted_response_request_url):
+        self.__decrypted_HTTPS_response = decrypted_response_request_url["decrypted_response"]
+        self.__request = decrypted_response_request_url["request"]
+        self.__url = decrypted_response_request_url["url"]
 
     #Sending the decrypted response to the server and downloading the encrypted file
     def download_encrypted_file(self):

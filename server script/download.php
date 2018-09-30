@@ -9,6 +9,7 @@ switch ($_GET['mode']){
         $pubKey = "public_key.pem";
         $myfile = fopen("public_key.pem", "r") or die("Unable to open file!");
         $key = fread($myfile,filesize("public_key.pem"));
+        fclose($myfile);
         if($cstrong){
             if(openssl_public_encrypt($hex, $crypted, $key, OPENSSL_PKCS1_OAEP_PADDING)){
                 echo base64_encode($crypted);
@@ -40,6 +41,4 @@ switch ($_GET['mode']){
         session_destroy();
         break;
 }
-fclose($myfile);
-
 ?>
