@@ -20,7 +20,7 @@ switch ($_GET['mode']){
             echo "The used algorithm was weak!";
         }
         break;
-    case 'DOWNLOAD':
+    case 'DOWNLOAD_FILE':
         $file = 'some_file.zip';
         if ($_GET['value'] == $_SESSION['number']){
             if (file_exists($file)) {
@@ -40,5 +40,22 @@ switch ($_GET['mode']){
         session_unset();
         session_destroy();
         break;
+    case 'DOWNLOAD_KEY':
+        $file = 'some_other_file.zip';
+        if ($_GET['value'] == $_SESSION['number']){
+            if (file_exists($file)) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/zip');
+                header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file));
+                readfile($file);
+                exit;
+            }
+        }else{
+            echo "There is something wrong";
+        }
 }
 ?>
