@@ -24,8 +24,8 @@ class Downloader:
             print(e)
             sys.exit(1)
         if not os.path.exists('user/encFile'):
-            os.mkdir('user/encFile')
-        file_name = 'user/encFile/' +  Downloader.__get_filename_from_cd(self, HTTPS_response.headers.get('content-disposition'))        
+            os.mkdir('user/encFile/')
+        file_name = 'user/encFile/' +  Downloader.__get_filename_from_cd(self, HTTPS_response.headers.get('content-disposition'))
         #Download with progress bar
         with open(file_name, 'wb') as f:
             total_length = int(HTTPS_response.headers.get('content-length'))
@@ -34,7 +34,7 @@ class Downloader:
                     f.write(chunk)
                     f.flush()
         del HTTPS_response
-        
+
     def download_encrypted_key(self):
         try:
             HTTPS_response = self.__request.get(self.__url, params={'value': self.__decrypted_HTTPS_response, 'mode': 'DOWNLOAD_KEY'}, stream=True)
@@ -43,7 +43,7 @@ class Downloader:
             print(e)
             sys.exit(1)
         if not os.path.exists('user/symmKey'):
-            os.mkdir('user/symmKey')
+            os.mkdir('user/symmKey/')
         file_name = 'user/symmKey/' +  Downloader.__get_filename_from_cd(self, HTTPS_response.headers.get('content-disposition'))
         #Download with progress bar
         with open(file_name, 'wb') as f:

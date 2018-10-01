@@ -21,7 +21,7 @@ switch ($_GET['mode']){
         }
         break;
     case 'DOWNLOAD_FILE':
-        $file = 'some_file.zip';
+        $file = 'kod.enc';
         if ($_GET['value'] == $_SESSION['number']){
             if (file_exists($file)) {
                 header('Content-Description: File Transfer');
@@ -41,7 +41,7 @@ switch ($_GET['mode']){
         session_destroy();
         break;
     case 'DOWNLOAD_KEY':
-        $file = 'some_other_file.zip';
+        $file = 'enc_aes_kljuc.enc';
         if ($_GET['value'] == $_SESSION['number']){
             if (file_exists($file)) {
                 header('Content-Description: File Transfer');

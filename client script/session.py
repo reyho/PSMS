@@ -15,15 +15,11 @@ if command_line_args['mode'] == 'download':
     authenticator = Authenticator(command_line_args['url'])
     downloader = Downloader(authenticator.authenticate())
     downloader.download_encrypted_file()
+    downloader.download_encrypted_key()
 elif command_line_args['mode'] == 'download->decrypt':
     authenticator = Authenticator(command_line_args['url'])
     downloader = Downloader(authenticator.authenticate())
     downloader.download_encrypted_file()
     downloader.download_encrypted_key()
-
-'''
-encrypted_file = open("enc_aes_kljuc.enc", "rb")
-cryptographer = Cryptographer(encrypted_file.read())
-decrypted_file = open("aes_key.key", "wb")
-decrypted_file.write(cryptographer.decrypt_file())
-'''
+    cryptographer = Cryptographer()
+    cryptographer.decrypt_symmetric_key()
