@@ -23,3 +23,6 @@ elif command_line_args['mode'] == 'download->decrypt':
     downloader.download_encrypted_key()
     cryptographer = Cryptographer()
     cryptographer.decrypt_symmetric_key()
+elif command_line_args['mode'] == 'upload':
+    cryptographer = Cryptographer()
+    cryptographer.encrypt_file()
