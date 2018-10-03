@@ -6,6 +6,9 @@ class Parser:
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--decrypt', action='store_true')
     parser.add_argument('-e', '--encrypt', action='store_true')
+    parser.add_argument('--inkey')
+    parser.add_argument('--symmkey', action='store_true')
+    
     parser.add_argument('-u', '--url', default='http://localhost/PSMS/download.php')
     parser.add_argument('--upload', action='store_true')
 
@@ -13,40 +16,23 @@ class Parser:
         self.__args = Parser.parser.parse_args()
 
     def parse_command_line(self):
-        if not self.__args.upload and self.__args.decrypt:
+        if self.__args.encrypt and self.__args.inkey and not self.__args.decrypt and not self.__args.symmkey:
             return dict(
-                mode='download->decrypt',
-                url=self.__args.url
+                mode='encrypt_sec_files',
+                path=self.__args.inkey
             )
-        elif not self.__args.upload and not self.__args.decrypt:
+        elif self.__args.decrypt and self.__args.symmkey and self.__args.inkey and not self.__args.encrypt:
             return dict(
-                mode='download',
-                url=self.__args.url
+                mode='decrypt_symm_key',
+                path=self.__args.inkey
             )
-        elif self.__args.upload and self.__args.encrypt:
+        elif self.__args.encrypt and self.__args.symmkey and self.__args.inkey and not self.__args.decrypt:
             return dict(
-                mode='encrypt->upload',
-                url=self.__args.url
+                mode='encrypt_symm_key',
+                path=self.__args.inkey
             )
-        elif self.__args.upload and not self.__args.encrypt:
+        elif self.__args.decrypt and self.__args.inkey and not self.__args.encrypt and not self.__args.symmkey:
             return dict(
-                mode='upload',
-                url=self.__args.url
+                mode='decrypt_sec_files',
+                path=self.__args.inkey
             )
-
-
-    def __make_new_user(self):
-        while True:
-            user_name = input('Choose your user name (q=quit): ')
-            if user_name.lower() == 'q':
-                return -1
-            elif os.path.exists(user_name):
-                print('That user name already exists.')
-            else:
-                print('Creating user: ' + user_name)
-                user_path = os.path.join('users', user_name)
-                os.makedirs(user_path)
-                os.makedirs(os.path.join(user_path, 'key'))
-                os.makedirs(os.path.join(user_path, 'efile'))
-                os.makedirs(os.path.join(user_path, 'defile'))
-                return user_name
