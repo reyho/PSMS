@@ -1,3 +1,8 @@
+'''
+Cryptographer.py takes care of the encryption/decryption of the symmetric key and
+the files that store your security information.
+'''
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding as apadding
@@ -11,31 +16,40 @@ import shutil
 class Cryptographer:
 
     def __init__(self):
+        #Initialising the salt value with random 8 bytes
         self.__salt = os.urandom(8)
 
     def decrypt_symmetric_key(self, path):
+        #Decrypting the symmetric key with a RSA private key
         Cryptographer.__load_priv_key(self, path)
-        Cryptographer.__decrypt_symmetric_key(self)
+        Cryptographer.__decrypt_symmetric_key(self) #Calling the function that actually decrypts the symmetric key
         with open("user/symmKey/aes_key.key", "wb") as decrypted_key:
-            decrypted_key.write(self.__decrypted_symmetric_key)
-        
+            decrypted_key.write(self.__decrypted_symmetric_key) #Writing the symetric key to a file.
+            '''
+            Maybe I dont have to write it to a file to be used for decryption/encryption.
+            I could use it only as a variable. I delete the decrypted symmetric key anyway.
+            I could pass an boolean argument to know if the function should write it to a file
+            or just keep in the variable for encryption/decryption.
+            '''
+
     def encrypt_symmetric_key(self, path):
+        #Encrypting the symmetric key with a RSA public key
         Cryptographer.__load_priv_key(self, path)
-        Cryptographer.__encrypt_symmetric_key(self)
+        Cryptographer.__encrypt_symmetric_key(self) #Calling the function that actually encrypts the symmetric key
         with open("user/symmKey/enc_aes_key.enc", "wb") as encrypted_key:
-            encrypted_key.write(self.__encrypted_symmetric_key)
-        os.remove("user/symmKey/aes_key.key")
+            encrypted_key.write(self.__encrypted_symmetric_key) #Writing the encrypted symetric key to a file.
+        os.remove("user/symmKey/aes_key.key") #Deleting the symmetric key after encryption
 
     def decrypt_file(self):
-        Cryptographer.__get_and_remove_salt(self)
-        Cryptographer.__get_key_and_iv(self, self.__salt)
+        Cryptographer.__get_and_remove_salt(self) #Extracting the salt from the final encrypted file and removing it so it can be decrypted
+        Cryptographer.__get_key_and_iv(self, self.__salt) #Calculating the key and iv from the result of hashing the salt value and symmetric key
         cipher = Cipher(algorithms.AES(self.__key), modes.CBC(self.__iv), backend=default_backend())
         decryptor = cipher.decryptor()
         with open("ziped.zip", "wb") as dec_file:
-            dec_file.write(decryptor.update(self.__encrypted_data) + decryptor.finalize())
-        os.remove("user/symmKey/aes_key.key")
-        os.remove("user/encFile/file.enc")
-            
+            dec_file.write(decryptor.update(self.__encrypted_data) + decryptor.finalize()) #Writing the decrypted data to a file
+        os.remove("user/symmKey/aes_key.key") #Removing the symmetric key
+        os.remove("user/encFile/file.enc") #Removing the encrypted file
+
     def __get_and_remove_salt(self):
         if os.path.exists('user/encFile/file.enc'):
             with open("user/encFile/file.enc", "rb") as enc_file:
@@ -121,8 +135,8 @@ class Cryptographer:
         else:
             print("There is no symmetric key for decryption.")
             sys.exit(1)
-        
-        
+
+
     def __encrypt_symmetric_key(self):
         public_key = self.__private_key.public_key()
         if os.path.exists('user/symmKey/aes_key.key'):
@@ -141,20 +155,5 @@ class Cryptographer:
                     print(e)
                     sys.exit(1)
         else:
-            print("There is no symmetric key for decryption.")
+            print("There is no symmetric key for encryption.")
             sys.exit(1)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
