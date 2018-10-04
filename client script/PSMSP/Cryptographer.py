@@ -54,8 +54,8 @@ class Cryptographer:
         if os.path.exists('user/encFile/file.enc'):
             with open("user/encFile/file.enc", "rb") as enc_file:
                 encrypted_file = enc_file.read()
-            self.__salt = encrypted_file[:8]
-            self.__encrypted_data = encrypted_file[8:]
+            self.__salt = encrypted_file[:8] #First 8 bytes are the salt which are extracted for the file
+            self.__encrypted_data = encrypted_file[8:] #The file for decryption excludes the first 8 bytes
         else:
             print("There is no encrypted file to decrypt.")
             sys.exit(1)
