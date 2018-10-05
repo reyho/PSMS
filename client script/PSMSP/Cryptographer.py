@@ -17,21 +17,23 @@ class Cryptographer:
 
     def __init__(self):
         #Initialising the salt value with random 8 bytes
+        if not os.path.exists('user/encFile/'):
+            os.mkdir('user/encFile/')
+        if not os.path.exists('user/secFiles/'):
+            os.mkdir('user/secFiles/')
+        if not os.path.exists('user/symmKey/'):
+            os.mkdir('user/symmKey/')
         self.__salt = os.urandom(8)
 
-    def decrypt_symmetric_key(self, path):
+    def decrypt_symmetric_key(self, path, materialize=False):
         #Decrypting the symmetric key with a RSA private key
+        self.__materialize = materialize
         Cryptographer.__load_priv_key(self, path)
         Cryptographer.__decrypt_symmetric_key(self) #Calling the function that actually decrypts the symmetric key
-        with open("user/symmKey/aes_key.key", "wb") as decrypted_key:
-            decrypted_key.write(self.__decrypted_symmetric_key) #Writing the symetric key to a file.
-            '''
-            Maybe I dont have to write it to a file to be used for decryption/encryption.
-            I could use it only as a variable. I delete the decrypted symmetric key anyway.
-            I could pass an boolean argument to know if the function should write it to a file
-            or just keep in the variable for encryption/decryption.
-            '''
-
+        if materialize:
+            with open("user/symmKey/aes_key.key", "wb") as decrypted_key:
+                decrypted_key.write(self.__decrypted_symmetric_key) #Writing the symetric key to a file.
+            
     def encrypt_symmetric_key(self, path):
         #Encrypting the symmetric key with a RSA public key
         Cryptographer.__load_priv_key(self, path)
@@ -47,7 +49,6 @@ class Cryptographer:
         decryptor = cipher.decryptor()
         with open("ziped.zip", "wb") as dec_file:
             dec_file.write(decryptor.update(self.__encrypted_data) + decryptor.finalize()) #Writing the decrypted data to a file
-        os.remove("user/symmKey/aes_key.key") #Removing the symmetric key
         os.remove("user/encFile/file.enc") #Removing the encrypted file
 
     def __get_and_remove_salt(self):
@@ -58,7 +59,7 @@ class Cryptographer:
             self.__encrypted_data = encrypted_file[8:] #The file for decryption excludes the first 8 bytes
         else:
             print("There is no encrypted file to decrypt.")
-            sys.exit(1)
+            sys.exit(1) #If the encrypted file doesn't exists exit the program
 
     def encrypt_file(self):
         Cryptographer.__get_key_and_iv(self, self.__salt)
@@ -69,20 +70,21 @@ class Cryptographer:
         with open("user/encFile/file.enc", "wb") as enc_file:
             salt_and_padded_file = self.__salt + encryptor.update(Cryptographer.__padding_source(self)) + encryptor.finalize()
             enc_file.write(salt_and_padded_file)
-        os.remove("user/symmKey/aes_key.key")
         os.remove("ziped.zip")
-        shutil.rmtree("user/secFiles")
+        for root, dirs, files in os.walk('user/secFiles'):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
 
 
     def __padding_source(self):
         padder = padding.PKCS7(128).padder()
         with open("ziped.zip", "rb") as source_file:
             return padder.update(source_file.read()) + padder.finalize()
-
-    def __get_key_and_iv(self, salt):
-        with open("user/symmKey/aes_key.key", "rb") as key_file:
-            aes_key = key_file.read()
-
+            
+    def __hash_away(self, aes_key, salt):
+    
         hashing = hashes.Hash(hashes.SHA512(), backend=default_backend())
         hashing.update(aes_key)
         hashing.update(salt)
@@ -95,11 +97,20 @@ class Cryptographer:
         hashing_key.update(hashed_iv)
         hashed_key = hashing_key.finalize()
 
-        hashed_iv = bytes(hashed_iv)
+        #hashed_iv = bytes(hashed_iv)
         self.__iv = hashed_iv[:16]
 
-        hashed_key = bytes(hashed_key)
+        #hashed_key = bytes(hashed_key)
         self.__key = hashed_key[:32]
+
+    def __get_key_and_iv(self, salt):
+        if self.__materialize:
+            with open("user/symmKey/aes_key.key", "rb") as key_file:
+                aes_key = key_file.read()
+        else:
+            aes_key = self.__decrypted_symmetric_key
+
+        Cryptographer.__hash_away(self, aes_key, self.__salt)
 
 
     def __load_priv_key(self, path):
