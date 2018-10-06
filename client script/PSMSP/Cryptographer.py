@@ -17,13 +17,6 @@ class Cryptographer:
 
     def __init__(self):
         #Initialising the salt value with random 8 bytes
-        #Checking if the required directorys exist. If not, then create them
-        if not os.path.exists('user/encFile/'):
-            os.mkdir('user/encFile/')
-        if not os.path.exists('user/secFiles/'):
-            os.mkdir('user/secFiles/')
-        if not os.path.exists('user/symmKey/'):
-            os.mkdir('user/symmKey/')
         self.__salt = os.urandom(8)
 
     def decrypt_symmetric_key(self, path, materialize=False):

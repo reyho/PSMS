@@ -9,6 +9,15 @@ from PSMSP.Parser import Parser
 from PSMSP.Cryptographer import Cryptographer
 from PSMSP.Ziper import Ziper
 import configparser
+import os
+
+#Checking if the required directorys exist. If not, then create them
+if not os.path.exists('user/encFile/'):
+    os.mkdir('user/encFile/')
+if not os.path.exists('user/secFiles/'):
+    os.mkdir('user/secFiles/')
+if not os.path.exists('user/symmKey/'):
+    os.mkdir('user/symmKey/')
 
 cryptographer = Cryptographer()
 parser = Parser()
@@ -30,3 +39,8 @@ elif command_line_args['mode'] == 'decrypt_sec_files':
     cryptographer.decrypt_symmetric_key(config['Paths']['PrivateKey'])
     cryptographer.decrypt_file()
     ziper.unzip_security_files()
+elif command_line_args['mode'] == 'download_enc_file':
+    authenticator = Authenticator(config['Paths']['ServerURL'])
+    downloader = Downloader(authenticator.authenticate())
+    downloader.download_encrypted_key()
+    downloader.download_encrypted_file()
