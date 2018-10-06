@@ -1,46 +1,32 @@
-import shutil
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-import requests
-import base64
+'''
+The working python script
+'''
 
+#Importing the Authenticator and Downloader class
+from PSMSP.Authenticator import Authenticator
+from PSMSP.Downloader import Downloader
+from PSMSP.Parser import Parser
+from PSMSP.Cryptographer import Cryptographer
+from PSMSP.Ziper import Ziper
+import configparser
 
-s = requests.Session()
+cryptographer = Cryptographer()
+parser = Parser()
+config = configparser.ConfigParser()
+config.read('config.ini')
+command_line_args = parser.parse_command_line()
 
-
-url = 'http://localhost/nesto/download.php'
-response = s.get(url, stream=True)
-
-
-ciphertext = response.text
-ciphertext = base64.b64decode(ciphertext)
-del response
-dec_resp = 1
-
-
-with open("private_key.pem", "rb") as key_file:
-
-	private_key = serialization.load_pem_private_key(
-		key_file.read(),
-		password=None,
-		backend=default_backend()
-	)
-	dec_resp = private_key.decrypt(
-		ciphertext,
-		padding.OAEP(
-			mgf=padding.MGF1(algorithm=hashes.SHA1()),
-			algorithm=hashes.SHA1(),
-			label=None
-		)
-	)
-
-	print(dec_resp)
-
-
-url2 = 'http://localhost/nesto/sesija1.php'
-response2 = s.get(url2, params={'value': dec_resp}, stream=True)
-print(response2.text)
-del response2
-
+if command_line_args['mode'] == 'encrypt_sec_files':
+    ziper = Ziper()
+    ziper.zip_security_files()
+    cryptographer.decrypt_symmetric_key(config['Paths']['PrivateKey'])
+    cryptographer.encrypt_file()
+elif command_line_args['mode'] == 'decrypt_symm_key':
+    cryptographer.decrypt_symmetric_key(config['Paths']['PrivateKey'], materialize=True)
+elif command_line_args['mode'] == 'encrypt_symm_key':
+    cryptographer.encrypt_symmetric_key(config['Paths']['PrivateKey'])
+elif command_line_args['mode'] == 'decrypt_sec_files':
+    ziper = Ziper()
+    cryptographer.decrypt_symmetric_key(config['Paths']['PrivateKey'])
+    cryptographer.decrypt_file()
+    ziper.unzip_security_files()
