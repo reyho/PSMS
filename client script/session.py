@@ -12,6 +12,8 @@ import configparser
 import os
 
 #Checking if the required directorys exist. If not, then create them
+if not os.path.exists('user/'):
+    os.mkdir('user/')
 if not os.path.exists('user/encFile/'):
     os.mkdir('user/encFile/')
 if not os.path.exists('user/secFiles/'):
