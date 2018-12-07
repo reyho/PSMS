@@ -1,3 +1,4 @@
 config.ini
 user/
 *.pyc
+keys/
