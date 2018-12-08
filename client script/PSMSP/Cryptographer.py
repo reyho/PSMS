@@ -59,8 +59,6 @@ class Cryptographer:
         Cryptographer.__get_key_and_iv(self, self.__salt) #For encryption I use a newly random value salt for key and iv generation
         cipher = Cipher(algorithms.AES(self.__key), modes.CBC(self.__iv), backend=default_backend())
         encryptor = cipher.encryptor()
-        if not os.path.exists('user/encFile'):
-            os.mkdir('user/encFile/')
         with open("user/encFile/file.enc", "wb") as enc_file:
             #Writing the salt + encrypted .zip file to a .enc file
             salt_and_padded_file = self.__salt + encryptor.update(Cryptographer.__padding_source(self)) + encryptor.finalize()

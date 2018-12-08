@@ -4,7 +4,7 @@ import os
 class Parser:
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('actions', choices=['download', 'upload', 'noload'])
+    parser.add_argument('actions', choices=['download', 'upload', 'noload', 'generate'])
     parser.add_argument('-de', choices=['d', 'e',])
     parser.add_argument('--symmkey', action='store_true')
 
@@ -31,4 +31,8 @@ class Parser:
         elif self.__args.actions == 'download' and not self.__args.de:
             return dict(
                 mode='download_enc_file'
+            )
+        elif self.__args.actions == 'generate':
+            return dict(
+                mode='generate_key_pair'
             )

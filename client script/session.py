@@ -8,10 +8,13 @@ from PSMSP.Downloader import Downloader
 from PSMSP.Parser import Parser
 from PSMSP.Cryptographer import Cryptographer
 from PSMSP.Ziper import Ziper
+from PSMSP.Generator import Generator
 import configparser
 import os
 
 #Checking if the required directorys exist. If not, then create them
+if not os.path.exists('../keys'):
+    os.mkdir('../keys')
 if not os.path.exists('user/'):
     os.mkdir('user/')
 if not os.path.exists('user/encFile/'):
@@ -46,3 +49,6 @@ elif command_line_args['mode'] == 'download_enc_file':
     downloader = Downloader(authenticator.authenticate())
     downloader.download_encrypted_key()
     downloader.download_encrypted_file()
+elif command_line_args['mode'] == 'generate_key_pair':
+    generator = Generator()
+    generator.generate_key_pair(config['Paths']['Serverkey'])
