@@ -36,3 +36,7 @@ class Parser:
             return dict(
                 mode='generate_key_pair'
             )
+        elif self.__args.actions == 'upload':
+            return dict(
+                mode='upload_file'
+            )

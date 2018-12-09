@@ -21,4 +21,4 @@ The content of the configuration file has to be like follows:
 [Paths]
 PrivateKey = /path/to/Privatekey/privatekey.pem <!-- The private key for encryption/decryption of your files -->
 ServerURL = https://hostname.of/yourPHPscript/download.php
-Serverkey = /path/to/serverAuthentication/Privatekey/privatekey.pem <!-- The private key used for authentication to download the files -->
+Serverkeypath = /path/to/serverAuthentication/Privatekey/ <!-- The private key used for authentication to download the files -->

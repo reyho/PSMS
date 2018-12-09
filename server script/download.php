@@ -58,4 +58,11 @@ switch ($_GET['mode']){
             echo "There is something wrong";
         }
 }
+if ($_POST['mode']) {
+    if ($_POST['value'] == $_SESSION['number']){
+        if (move_uploaded_file($_FILES['upload_file']['tmp_name'], 'fajl.enc')) {
+            echo 'Fajl je prenesen';
+        }
+    }
+}
 ?>

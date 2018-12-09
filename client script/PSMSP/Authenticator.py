@@ -15,9 +15,10 @@ class Authenticator:
     #Declaration of the HTTP request with session enabled
     __HTTPS_request = requests.Session()
 
-    #Initialising the object with the url of the php script whitch will authenticate me
-    def __init__(self, url):
+    #Initialising the object with the url of the php script whitch will authenticate me and the path to the private key
+    def __init__(self, url, path):
         self.__url = url
+        self.__path = path
 
     def authenticate(self):
         #Loading the private key which I will use to decrypt the response of the server in order to authenticate me.
@@ -39,14 +40,14 @@ class Authenticator:
     def __load_priv_key(self):
         try:
             #Maybe I should make a config file to host the relevant data like paths and such.
-            with open("../keys/private_key.pem", "rb") as key_file:
+            with open(self.__path + "private_key.pem", "rb") as key_file:
                 self.__private_key = serialization.load_pem_private_key(
                     key_file.read(),
                     password=None,
                     backend=default_backend()
                 )
         except Exception as e:
-            print('Private key could not be found.')
+            print('Private key for the authentication to the server could not be found.')
             print(e)
             sys.exit(1)
 

@@ -116,7 +116,7 @@ class Cryptographer:
                     backend=default_backend()
                 )
         except Exception as e:
-            print('Private key could not be found.')
+            print('Private key for encryption could not be found.')
             print(e)
             sys.exit(1)
 
