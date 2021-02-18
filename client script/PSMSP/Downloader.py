@@ -15,6 +15,11 @@ class Downloader:
         self.__request = decrypted_response_request_url["request"]
         self.__url = decrypted_response_request_url["url"]
 
+    def download(self):
+
+        self.download_encrypted_file()
+        self.download_encrypted_key()
+
     #Sending the decrypted response to the server and downloading the encrypted file
     def download_encrypted_file(self):
         try:
@@ -23,9 +28,7 @@ class Downloader:
             print('HTTPS request error in Downloader.')
             print(e)
             sys.exit(1)
-        if not os.path.exists('user/encFile'):
-            os.mkdir('user/encFile/')
-        file_name = 'user/encFile/' +  Downloader.__get_filename_from_cd(self, HTTPS_response.headers.get('content-disposition'))
+        file_name = 'user/encFile/' +  self.__get_filename_from_cd(HTTPS_response.headers.get('content-disposition'))
         #Download with progress bar
         with open(file_name, 'wb') as f:
             total_length = int(HTTPS_response.headers.get('content-length'))
@@ -42,9 +45,7 @@ class Downloader:
             print('HTTPS request error in Downloader.')
             print(e)
             sys.exit(1)
-        if not os.path.exists('user/symmKey'):
-            os.mkdir('user/symmKey/')
-        file_name = 'user/symmKey/' +  Downloader.__get_filename_from_cd(self, HTTPS_response.headers.get('content-disposition'))
+        file_name = 'user/symmKey/' +  self.__get_filename_from_cd(HTTPS_response.headers.get('content-disposition'))
         #Download with progress bar
         with open(file_name, 'wb') as f:
             total_length = int(HTTPS_response.headers.get('content-length'))

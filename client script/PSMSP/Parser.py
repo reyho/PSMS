@@ -28,15 +28,27 @@ class Parser:
             return dict(
                 mode='decrypt_sec_files'
             )
-        elif self.__args.actions == 'download' and not self.__args.de:
+        elif self.__args.actions == 'download' and not self.__args.de and self.__args.symmkey:
+            return dict(
+                mode='download_enc_file_symmkey'
+            )
+        elif self.__args.actions == 'download' and not self.__args.de and not self.__args.symmkey:
             return dict(
                 mode='download_enc_file'
             )
-        elif self.__args.actions == 'generate':
+        elif self.__args.actions == 'generate' and not self.__args.symmkey:
             return dict(
                 mode='generate_key_pair'
             )
-        elif self.__args.actions == 'upload':
+        elif self.__args.actions == 'generate' and self.__args.symmkey:
+            return dict(
+                mode='generate_aes_key'
+            )
+        elif self.__args.actions == 'upload' and not self.__args.symmkey:
             return dict(
                 mode='upload_file'
+            )
+        elif self.__args.actions == 'upload' and self.__args.symmkey:
+            return dict(
+                mode='upload_key'
             )

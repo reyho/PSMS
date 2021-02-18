@@ -12,5 +12,11 @@ class Ziper:
             sys.exit(1)
 
     def unzip_security_files(self):
-        shutil.unpack_archive('ziped.zip', 'user/secFiles', 'zip')
+        try:
+            shutil.unpack_archive('ziped.zip', 'user/secFiles', 'zip')
+        except Exception as e:
+            print('Unziping was unsuccessful. Probably because the aes key is wrong.')
+            print(e)
+            sys.exit(1)
+        os.remove("user/encFile/file.enc") #Removing the encrypted file
         os.remove("ziped.zip")

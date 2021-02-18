@@ -5,6 +5,7 @@ Generator.py generates a RSA public key pair.
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
+import os
 
 class Generator:
 
@@ -33,3 +34,9 @@ class Generator:
 
         with open(path + "public_key.pem", "wb") as publicKey:
             publicKey.write(pem_public)
+
+    def generate_aes_key(self,path):
+
+        key = os.urandom(256)
+        with open(path + "aes_key.key", "wb") as aesKey:
+            aesKey.write(key)
